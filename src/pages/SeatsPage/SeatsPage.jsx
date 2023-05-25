@@ -1,56 +1,69 @@
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 import styled from "styled-components"
+import SeatReservation from "../../components/SeatReservation"
 
 export default function SeatsPage() {
+    const {idSessao} = useParams()
+    const [sessao, setSessao] = useState()
+    const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
-    return (
-        <PageContainer>
-            Selecione o(s) assento(s)
+    useEffect(() => {
+        const promise = axios.get(URL)
 
-            <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
-            </SeatsContainer>
+        promise.then((res) => {
+            console.log(res.data)
+            setSessao(res.data)
+        })
+        promise.catch((err) => {console.log(err.response.data)})
+    }, [])
 
-            <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle />
-                    Selecionado
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle />
-                    Disponível
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle />
-                    Indisponível
-                </CaptionItem>
-            </CaptionContainer>
+    function chooseSeat() {
 
-            <FormContainer>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+    }
 
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+    if(sessao) {
+        return (
+            <PageContainer>
+                Selecione o(s) assento(s)
 
-                <button>Reservar Assento(s)</button>
-            </FormContainer>
+                <SeatsContainer>
+                    {sessao.seats.map((seat) => 
+                        <SeatItem data-test="seat" key={seat.id} available={seat.isAvailable} onClick={(ev) => seat.isAvailable ? chooseSeat(ev) : null}>{seat.name}</SeatItem> 
+                    )}
+                </SeatsContainer>
+                        
+                <CaptionContainer>
+                    <CaptionItem>
+                        <CaptionCircle />
+                        Selecionado
+                    </CaptionItem>
+                    <CaptionItem>
+                        <CaptionCircle />
+                        Disponível
+                    </CaptionItem>
+                    <CaptionItem>
+                        <CaptionCircle />
+                        Indisponível
+                    </CaptionItem>
+                </CaptionContainer>
 
-            <FooterContainer>
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
-                </div>
-            </FooterContainer>
+                <SeatReservation />
 
-        </PageContainer>
-    )
+                <FooterContainer data-test="footer">
+                    <div>
+                        <img src={sessao.movie.posterURL} alt={sessao.movie.overview} />
+                    </div>
+                    <div>
+                        <p>{sessao.movie.title}</p>
+                        <p>{`${sessao.day.weekday} - ${sessao.name}`}</p>
+                    </div>
+                </FooterContainer>
+
+            </PageContainer>
+        )
+    }
 }
 
 const PageContainer = styled.div`
@@ -74,20 +87,7 @@ const SeatsContainer = styled.div`
     justify-content: center;
     margin-top: 20px;
 `
-const FormContainer = styled.div`
-    width: calc(100vw - 40px); 
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 20px 0;
-    font-size: 18px;
-    button {
-        align-self: center;
-    }
-    input {
-        width: calc(100vw - 60px);
-    }
-`
+
 const CaptionContainer = styled.div`
     display: flex;
     flex-direction: row;
