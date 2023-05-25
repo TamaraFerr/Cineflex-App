@@ -13,7 +13,12 @@ export default function() {
                     CPF do Comprador:
                     <input placeholder="Digite seu CPF..." data-test="client-cpf"/>
 
-                    <Link to={`/sucesso`}>
+                    <Link to={`/sucesso`}
+                        style={{ 
+                            textDecoration: "none",
+                            alignSelf: "center",
+                        }}
+                    >
                         <button data-test="book-seat-btn">Reservar Assento(s)</button>
                     </Link>
             </FormContainer>
