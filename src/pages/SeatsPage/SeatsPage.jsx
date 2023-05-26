@@ -2,11 +2,13 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import styled from "styled-components"
-import SeatReservation from "../../components/SeatReservation"
+import SeatReservation from "./SeatReservation"
 
 export default function SeatsPage() {
     const {idSessao} = useParams()
     const [sessao, setSessao] = useState()
+    const [reservados, setReservados] = useState([])
+    const [estado, setEstado] = useState("indisponível")
     const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
     useEffect(() => {
@@ -19,8 +21,19 @@ export default function SeatsPage() {
         promise.catch((err) => {console.log(err.response.data)})
     }, [])
 
-    function chooseSeat() {
-
+    function chooseSeat(seat) {
+        if(!seat.isAvailable){
+            alert("Esse assento não está disponível")
+        } else {
+            const foiReservado = reservados.some((seats) => seats.id === seat.id)
+            
+            if(foiReservado){
+               const novaLista = reservados.filter((seats) = seats.is !== seat.id)
+               setReservados(novaLista)
+            } else {
+                setReservados([...reservados, seat])
+            }
+        }
     }
 
     if(sessao) {
@@ -30,21 +43,29 @@ export default function SeatsPage() {
 
                 <SeatsContainer>
                     {sessao.seats.map((seat) => 
-                        <SeatItem data-test="seat" key={seat.id} available={seat.isAvailable} onClick={(ev) => seat.isAvailable ? chooseSeat(ev) : null}>{seat.name}</SeatItem> 
+                        <SeatItem data-test="seat" 
+                            key={seat.id} 
+                            available={seat.isAvailable} 
+                            onClick={(ev) => seat.isAvailable ? chooseSeat(ev) : null}
+                            estado={estado}
+                            foiReservado={reservados.some((seats) => seats.id === seat.id)}
+                            >
+                                {seat.name}
+                        </SeatItem> 
                     )}
                 </SeatsContainer>
                         
                 <CaptionContainer>
                     <CaptionItem>
-                        <CaptionCircle />
+                        <CaptionCircle status={"selecionado"}/>
                         Selecionado
                     </CaptionItem>
                     <CaptionItem>
-                        <CaptionCircle />
+                        <CaptionCircle status={"disponível"}/>
                         Disponível
                     </CaptionItem>
                     <CaptionItem>
-                        <CaptionCircle />
+                        <CaptionCircle status={"indisponível"}/>
                         Indisponível
                     </CaptionItem>
                 </CaptionContainer>
@@ -96,8 +117,24 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${(props) => {
+        if(props.status === "selecionado"){
+            return "#0E7D71"
+        } else if(props.status === "disponível"){
+            return "#7B8B99"
+        } else {
+            return "#F7C52B"
+        }
+    }};
+    background-color: ${(props) => {
+        if(props.status === "selecionado"){
+            return "#1AAE9E"
+        } else if(props.status === "disponível"){
+            return "#C3CFD9"
+        } else {
+            return "#FBE192"
+        }
+    }};
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -113,8 +150,24 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${(props) => {
+        if(props.status === "selecionado"){
+            return "#0E7D71"
+        } else if(props.status === "disponível"){
+            return "#7B8B99"
+        } else {
+            return "#F7C52B"
+        }
+    }};
+    background-color: ${(props) => {
+        if(props.status === "selecionado"){
+            return "#1AAE9E"
+        } else if(props.status === "disponível"){
+            return "#C3CFD9"
+        } else {
+            return "#FBE192"
+        }
+    }};
     height: 25px;
     width: 25px;
     border-radius: 25px;
