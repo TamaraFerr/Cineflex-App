@@ -5,7 +5,7 @@ import styled from "styled-components"
 import SeatReservation from "./SeatReservation"
 import Seats from "./Seats"
 
-export default function SeatsPage() {
+export default function SeatsPage({setSucesso}) {
     const {idSessao} = useParams()
     const [sessao, setSessao] = useState()
     const [reservados, setReservados] = useState([])
@@ -67,7 +67,11 @@ export default function SeatsPage() {
                     </CaptionItem>
                 </CaptionContainer>
 
-                <SeatReservation />
+                <SeatReservation 
+                    reservados={reservados}
+                    setSucesso={setSucesso}
+                    sessao={sessao}
+                />
 
                 <FooterContainer data-test="footer">
                     <div>
