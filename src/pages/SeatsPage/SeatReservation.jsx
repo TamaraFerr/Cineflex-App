@@ -1,12 +1,17 @@
 import { useState } from "react"
 import styled from "styled-components"
-import { Form, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 export default function() {
 
+
+    function finalizarCompra(e){
+        e.preventDefault()
+    }
+
     return (
-        <form>
-            <FormContainer>
+        <>
+            <FormContainer onSubmit={finalizarCompra}>
                     Nome do Comprador:
                     <input placeholder="Digite seu nome..." data-test="client-name"/>
 
@@ -19,14 +24,14 @@ export default function() {
                             alignSelf: "center",
                         }}
                     >
-                        <button data-test="book-seat-btn">Reservar Assento(s)</button>
+                        <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
                     </Link>
             </FormContainer>
-        </form>
+        </>
     )
 }
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     width: calc(100vw - 40px); 
     display: flex;
     flex-direction: column;

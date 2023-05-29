@@ -3,12 +3,12 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import styled from "styled-components"
 import SeatReservation from "./SeatReservation"
+import Seats from "./Seats"
 
 export default function SeatsPage() {
     const {idSessao} = useParams()
     const [sessao, setSessao] = useState()
     const [reservados, setReservados] = useState([])
-    const [estado, setEstado] = useState("indisponível")
     const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function SeatsPage() {
             const foiReservado = reservados.some((seats) => seats.id === seat.id)
             
             if(foiReservado){
-               const novaLista = reservados.filter((seats) = seats.is !== seat.id)
+               const novaLista = reservados.filter((seats) = seats.id !== seat.id)
                setReservados(novaLista)
             } else {
                 setReservados([...reservados, seat])
@@ -42,17 +42,14 @@ export default function SeatsPage() {
                 Selecione o(s) assento(s)
 
                 <SeatsContainer>
-                    {sessao.seats.map((seat) => 
-                        <SeatItem data-test="seat" 
-                            key={seat.id} 
-                            available={seat.isAvailable} 
-                            onClick={(ev) => seat.isAvailable ? chooseSeat(ev) : null}
-                            estado={estado}
-                            foiReservado={reservados.some((seats) => seats.id === seat.id)}
-                            >
-                                {seat.name}
-                        </SeatItem> 
-                    )}
+                    {sessao.seats.map((seat) => (
+                        <Seats
+                            key={seat.id}
+                            seat={seat}
+                            chooseSeat={() =>  chooseSeat(seat)}
+                            foiReservado = {reservados.some((seats) => seats.id === seat.id)}
+                        />
+                    ))}
                 </SeatsContainer>
                         
                 <CaptionContainer>
@@ -149,35 +146,7 @@ const CaptionItem = styled.div`
     align-items: center;
     font-size: 12px;
 `
-const SeatItem = styled.div`
-    border: 1px solid ${(props) => {
-        if(props.status === "selecionado"){
-            return "#0E7D71"
-        } else if(props.status === "disponível"){
-            return "#7B8B99"
-        } else {
-            return "#F7C52B"
-        }
-    }};
-    background-color: ${(props) => {
-        if(props.status === "selecionado"){
-            return "#1AAE9E"
-        } else if(props.status === "disponível"){
-            return "#C3CFD9"
-        } else {
-            return "#FBE192"
-        }
-    }};
-    height: 25px;
-    width: 25px;
-    border-radius: 25px;
-    font-family: 'Roboto';
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 3px;
-`
+
 const FooterContainer = styled.div`
     width: 100%;
     height: 120px;
