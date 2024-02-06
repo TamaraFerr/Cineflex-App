@@ -6,10 +6,9 @@ import { Link, useParams } from "react-router-dom"
 export default function SessionsPage() {
     const {idFilme} = useParams() 
     const [sessoes, setSessoes] = useState()
-    const URL = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes/`
 
     useEffect(() => {
-        const promise = axios.get(URL)
+        const promise = axios.get(`${import.meta.env.VITE_API_URL}/movies/${idFilme}/showtimes/`)
 
         promise.then((res) => {
             setSessoes(res.data)

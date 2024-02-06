@@ -5,10 +5,9 @@ import { Link } from "react-router-dom"
 
 export default function HomePage() {
     const [filmes, setFilmes] = useState([])
-    const filme = "https://mock-api.driven.com.br/api/v8/cineflex/movies"
  
    useEffect(() => {
-    const promise = axios.get(filme)
+    const promise = axios.get(`${import.meta.env.VITE_API_URL}/movies`)
 
     promise.then((res) => {setFilmes(res.data)})
     promise.catch((err) => {console.log(err.data)})

@@ -16,7 +16,7 @@ export default function({reservados, setSucesso, sessao}) {
         const ids = reservados.map((seat) => seat.id)
         const body = { ...form, ids }
 
-        axios.post(`https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`, body)
+        axios.post(`${import.meta.env.VITE_API_URL}/movies/seats/book-many`, body)
             .then(res => {
                 const infos = {
                     filme: sessao.movie.title,

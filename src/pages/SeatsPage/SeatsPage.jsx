@@ -9,10 +9,9 @@ export default function SeatsPage({setSucesso}) {
     const {idSessao} = useParams()
     const [sessao, setSessao] = useState()
     const [reservados, setReservados] = useState([])
-    const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
     useEffect(() => {
-        const promise = axios.get(URL)
+        const promise = axios.get(`${import.meta.env.VITE_API_URL}/movies/showtimes/${idSessao}/seats`)
 
         promise.then((res) => {
             console.log(res.data)
